@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tehillz Constitution - Explore World Constitutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.6s both;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .countries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .country-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .country-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .country-card:hover::before {
+            animation: shine 0.6s ease-in-out;
+        }
+
+        .country-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .country-flag {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .country-name {
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .country-description {
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .constitution-viewer {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: all 0.8s ease;
+        }
+
+        .constitution-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .constitution-title {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .constitution-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float-particle 20s linear infinite;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .powered-by {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shine {
+            0% { opacity: 0; transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .countries-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .constitution-title {
+                font-size: 2rem;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <main class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="logo">Tehillz Constitution</h1>
+            <p class="tagline">Explore the Constitutional Heritage of Every Nation</p>
+            <button class="cta-button" onclick="scrollToCountries()">Discover Constitutions</button>
+        </div>
+    </main>
+
+    <section class="countries-grid" id="countries">
+        <div class="country-card" onclick="viewConstitution('nigeria', ['#008751', '#ffffff'])">
+            <div class="country-flag">🇳🇬</div>
+            <h3 class="country-name">Nigeria</h3>
+            <p class="country-description">Federal Republic with a rich constitutional history since independence in 1960</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('china', ['#de2910', '#ffde00'])">
+            <div class="country-flag">🇨🇳</div>
+            <h3 class="country-name">China</h3>
+            <p class="country-description">People's Republic governed by the Constitution of the People's Republic of China</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('usa', ['#b22234', '#ffffff', '#3c3b6e'])">
+            <div class="country-flag">🇺🇸</div>
+            <h3 class="country-name">United States</h3>
+            <p class="country-description">The world's oldest written national constitution still in effect</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('uk', ['#012169', '#ffffff', '#c8102e'])">
+            <div class="country-flag">🇬🇧</div>
+            <h3 class="country-name">United Kingdom</h3>
+            <p class="country-description">Uncodified constitution with centuries of parliamentary tradition</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('france', ['#002654', '#ffffff', '#ce1126'])">
+            <div class="country-flag">🇫🇷</div>
+            <h3 class="country-name">France</h3>
+            <p class="country-description">Fifth Republic constitution emphasizing liberty, equality, and fraternity</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('germany', ['#000000', '#dd0000', '#ffce00'])">
+            <div class="country-flag">🇩🇪</div>
+            <h3 class="country-name">Germany</h3>
+            <p class="country-description">Basic Law establishing a federal parliamentary republic</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('japan', ['#bc002d', '#ffffff'])">
+            <div class="country-flag">🇯🇵</div>
+            <h3 class="country-name">Japan</h3>
+            <p class="country-description">Post-war constitution emphasizing pacifism and democratic principles</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('india', ['#ff9933', '#ffffff', '#138808'])">
+            <div class="country-flag">🇮🇳</div>
+            <h3 class="country-name">India</h3>
+            <p class="country-description">World's longest written constitution with comprehensive fundamental rights</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('brazil', ['#009639', '#ffdf00', '#002776'])">
+            <div class="country-flag">🇧🇷</div>
+            <h3 class="country-name">Brazil</h3>
+            <p class="country-description">Federal republic constitution known as the "Citizen Constitution"</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('canada', ['#ff0000', '#ffffff'])">
+            <div class="country-flag">🇨🇦</div>
+            <h3 class="country-name">Canada</h3>
+            <p class="country-description">Constitutional monarchy with Charter of Rights and Freedoms</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('australia', ['#012169', '#ffffff', '#e4002b'])">
+            <div class="country-flag">🇦🇺</div>
+            <h3 class="country-name">Australia</h3>
+            <p class="country-description">Federal parliamentary constitutional monarchy since 1901</p>
+        </div>
+
+        <div class="country-card" onclick="viewConstitution('south-africa', ['#000000', '#007749', '#ffb612', '#de3831', '#002395', '#ffffff'])">
+            <div class="country-flag">🇿🇦</div>
+            <h3 class="country-name">South Africa</h3>
+            <p class="country-description">Post-apartheid constitution with strong bill of rights</p>
+        </div>
+    </section>
+
+    <div class="constitution-viewer" id="constitutionViewer">
+        <div class="constitution-header">
+            <button class="back-button" onclick="goBack()">← Back to Countries</button>
+            <h2 class="constitution-title" id="constitutionTitle">Constitution Title</h2>
+        </div>
+        <div class="constitution-content" id="constitutionContent">
+            <!-- Constitution content will be loaded here -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📧</span>
+                    <span>odjojitehilla@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <span>📞</span>
+                    <span>+2349037136447</span>
+                </div>
+            </div>
+            <div class="powered-by">
+                Powered by Tehilla
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.floating-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Smooth scroll to countries section
+        function scrollToCountries() {
+            document.getElementById('countries').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // View constitution with dynamic background
+        function viewConstitution(country, colors) {
+            const hero = document.getElementById('hero');
+            const countries = document.getElementById('countries');
+            const viewer = document.getElementById('constitutionViewer');
+            const title = document.getElementById('constitutionTitle');
+            const content = document.getElementById('constitutionContent');
+            
+            // Create gradient from flag colors
+            let gradient;
+            if (colors.length === 2) {
+                gradient = `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
+            } else if (colors.length === 3) {
+                gradient = `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 50%, ${colors[2]} 100%)`;
+            } else {
+                gradient = `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 25%, ${colors[2]} 50%, ${colors[3]} 75%, ${colors[4]} 100%)`;
+            }
+            
+            // Change background
+            document.body.style.background = gradient;
+            
+            // Hide hero and countries, show constitution viewer
+            hero.style.display = 'none';
+            countries.style.display = 'none';
+            viewer.style.display = 'block';
+            
+            // Set title
+            title.textContent = `Constitution of ${country.charAt(0).toUpperCase() + country.slice(1)}`;
+            
+            // Load constitution content (placeholder)
+            content.innerHTML = `
+                <h3>Preamble</h3>
+                <p>We, the people of ${country.charAt(0).toUpperCase() + country.slice(1)}, having solemnly resolved to constitute our nation into a sovereign democratic republic, and to secure to all citizens justice, liberty, equality, and fraternity, do hereby adopt, enact, and give to ourselves this Constitution.</p>
+                
+                <h3>Article I - Fundamental Rights</h3>
+                <p>All citizens shall have the right to life, liberty, and the pursuit of happiness. No person shall be denied equal protection under the law regardless of race, religion, gender, or social status.</p>
+                
+                <h3>Article II - Government Structure</h3>
+                <p>The government shall be divided into three branches: legislative, executive, and judicial. Each branch shall have distinct powers and responsibilities to ensure a system of checks and balances.</p>
+                
+                <h3>Article III - Legislative Power</h3>
+                <p>The legislative power shall be vested in a parliament/congress consisting of elected representatives of the people. Laws shall be made through democratic processes and majority rule while protecting minority rights.</p>
+                
+                <h3>Article IV - Executive Power</h3>
+                <p>The executive power shall be vested in the head of state/government, who shall be responsible for implementing and enforcing the laws passed by the legislature.</p>
+                
+                <h3>Article V - Judicial Power</h3>
+                <p>The judicial power shall be vested in an independent judiciary, which shall interpret the law and ensure justice is administered fairly and impartially.</p>
+                
+                <p><em>This is a sample constitution framework. The actual constitution contains detailed provisions, amendments, and specific legal language governing all aspects of national governance.</em></p>
+            `;
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Go back to countries view
+        function goBack() {
+            const hero = document.getElementById('hero');
+            const countries = document.getElementById('countries');
+            const viewer = document.getElementById('constitutionViewer');
+            
+            // Reset background
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            
+            // Show hero and countries, hide constitution viewer
+            hero.style.display = 'flex';
+            countries.style.display = 'grid';
+            viewer.style.display = 'none';
+            
+            // Scroll to countries
+            setTimeout(() => {
+                document.getElementById('countries').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+
+        // Initialize particles when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+        });
+
+        // Add scroll animations
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
